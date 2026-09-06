@@ -65,14 +65,17 @@ const Message = ({ message, onOpenLightbox }) => {
   const chatClassName = fromMe ? "chat-end" : "chat-start";
 
   const senderObj = typeof message.senderId === "object" ? message.senderId : null;
-  const isAISender = rawSenderId === "guppshup_ai_bot" || senderObj?.username?.startsWith("ai_") || selectedConversation?.isAI;
+  const isAISender =
+    rawSenderId === "guppshup_ai_bot" ||
+    Boolean(senderObj?.username && senderObj.username.startsWith("ai_")) ||
+    message.role === "assistant" ||
+    (Boolean(selectedConversation?.isAI) && (rawSenderId === selectedConversation?._id || rawSenderId === selectedConversation?.characterId));
 
   const targetCharId = message.characterId || (selectedConversation?.isIndividualAI ? selectedConversation?.characterId : null) || activeCharacterId || "kabir";
   const currentPersona = charMetaMap[targetCharId] || charMetaMap.kabir;
 
-  // Purge phantom avatar: for assistant bubbles ALWAYS use the canonical
-  // frontend persona config (matches DB aiCharacters.js) — never a mixed DB prop.
-  const isAssistantBubble = message.role === "assistant" || isAISender;
+  // Assistant bubble is strictly when message is sent by an AI character, NOT a real human contact
+  const isAssistantBubble = isAISender;
 
   const senderName = fromMe
     ? authUser.fullName

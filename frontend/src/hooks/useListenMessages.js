@@ -31,11 +31,23 @@ const useListenMessages = () => {
       let isForCurrentConversation = false;
       if (selectedConversation) {
         if (selectedConversation.isGroup || selectedConversation.groupId) {
-          isForCurrentConversation = Boolean(msgGroupId && msgGroupId === selectedConversation._id);
-        } else {
           isForCurrentConversation = Boolean(
-            selectedConversation._id === senderId ||
-            selectedConversation._id === receiverId
+            msgGroupId && selectedConversation._id && msgGroupId.toString() === selectedConversation._id.toString()
+          );
+        } else {
+          const currentId = selectedConversation._id ? selectedConversation._id.toString() : "";
+          const currentCharId = selectedConversation.characterId ? selectedConversation.characterId.toString() : "";
+          const senderStr = senderId ? senderId.toString() : "";
+          const receiverStr = receiverId ? receiverId.toString() : "";
+          const authUserStr = authUser?._id ? authUser._id.toString() : "";
+
+          // In direct 1-on-1 human or AI chat, the message belongs to current chat ONLY IF:
+          // 1) sender is current conversation contact AND receiver is authUser, OR
+          // 2) receiver is current conversation contact AND sender is authUser, OR
+          // 3) characterId matches the open AI persona.
+          isForCurrentConversation = Boolean(
+            (currentId && (currentId === senderStr || (currentId === receiverStr && senderStr === authUserStr))) ||
+            (currentCharId && (currentCharId === senderStr || currentCharId === receiverStr))
           );
         }
       }
