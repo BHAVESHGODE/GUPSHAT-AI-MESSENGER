@@ -1,0 +1,352 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Theme Definitions - always active regardless of OS color scheme */
+:root, html, [data-theme="sapphire"], [data-theme="dark-sapphire"] {
+  --bg-gradient: linear-gradient(135deg, #0B1320 0%, #060B14 60%, #131F33 100%);
+  --panel-bg: rgba(6, 11, 20, 0.75);
+  --panel-border: rgba(56, 189, 248, 0.2);
+  --accent: #0ea5e9;
+  --text-main: #f0f9ff;
+  --text-muted: #7dd3fc;
+  --accent-hover: #38bdf8;
+  --card-blur: blur(12px);
+  --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 20px -5px rgba(59, 130, 246, 0.25);
+  --avatar-border: #0ea5e9;
+  --input-bg: #131F33;
+  --heading-font: 'DM Serif Display', serif;
+}
+
+[data-theme="terracotta"], [data-theme="glassmorphic"] {
+  --bg-gradient: linear-gradient(135deg, #fdf6f0 0%, #f6ebd9 50%, #edd8c7 100%);
+  --panel-bg: rgba(255, 255, 255, 0.75);
+  --panel-border: rgba(154, 52, 18, 0.15);
+  --accent: #9a3412;
+  --text-main: #291b16;
+  --text-muted: #7c2d12;
+  --accent-hover: #c2410c;
+  --card-blur: blur(10px);
+  --card-shadow: 0 20px 40px -15px rgba(154, 52, 12, 0.12), 0 0 0 1px rgba(154, 52, 12, 0.08);
+  --avatar-border: #9a3412;
+  --input-bg: #ffffff;
+  --heading-font: 'DM Serif Display', serif;
+}
+
+[data-theme="terracotta"] .animated-edge-frame,
+[data-theme="terracotta"] .glass-panel,
+[data-theme="glassmorphic"] .animated-edge-frame,
+[data-theme="glassmorphic"] .glass-panel {
+  box-shadow: 0 20px 40px -15px rgba(154, 52, 12, 0.12), 0 0 0 1px rgba(154, 52, 12, 0.08);
+}
+
+[data-theme="midnight"], [data-theme="classic"], [data-theme="midnight-cozy"] {
+  --bg-gradient: linear-gradient(135deg, #0B0F19 0%, #111827 60%, #1A2235 100%);
+  --panel-bg: rgba(17, 24, 39, 0.75);
+  --panel-border: rgba(255, 255, 255, 0.05);
+  --accent: #f59e0b;
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --accent-hover: #fbbf24;
+  --card-blur: blur(12px);
+  --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --avatar-border: #f59e0b;
+  --input-bg: #1A2235;
+  --heading-font: 'DM Serif Display', serif;
+}
+
+[data-theme="lilac"], [data-theme="cyberpunk"], [data-theme="lilac-lavender"] {
+  --bg-gradient: linear-gradient(135deg, #130b1c 0%, #1d1128 60%, #261735 100%);
+  --panel-bg: rgba(29, 17, 40, 0.75);
+  --panel-border: rgba(168, 85, 247, 0.2);
+  --accent: #a855f7;
+  --text-main: #f3e8ff;
+  --text-muted: #c4b5fd;
+  --accent-hover: #c084fc;
+  --card-blur: blur(12px);
+  --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 20px -5px rgba(168, 85, 247, 0.25);
+  --avatar-border: #a855f7;
+  --input-bg: #261735;
+  --heading-font: 'DM Serif Display', serif;
+}
+
+[data-theme="forest"], [data-theme="sage-forest"] {
+  --bg-gradient: linear-gradient(135deg, #0A1711 0%, #050C09 60%, #10241A 100%);
+  --panel-bg: rgba(5, 12, 9, 0.75);
+  --panel-border: rgba(16, 185, 129, 0.2);
+  --accent: #10b981;
+  --text-main: #ecfdf5;
+  --text-muted: #6ee7b7;
+  --accent-hover: #34d399;
+  --card-blur: blur(12px);
+  --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 20px -5px rgba(16, 185, 129, 0.25);
+  --avatar-border: #10b981;
+  --input-bg: #10241A;
+  --heading-font: 'DM Serif Display', serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg-gradient);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  min-height: 100vh;
+  color: var(--text-main);
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow-x: hidden;
+}
+
+/* Ensure Chat Bubble Text is Always Crisp & Readable.
+   NOTE: No !important background/color here — Midnight, Lilac, Sapphire & Forest
+   use Tailwind gradient + glass classes directly on .chat-bubble for contrast.
+   These defaults only apply to legacy themes. */
+.chat-bubble {
+  opacity: 1 !important;
+  word-break: break-word;
+}
+
+[data-theme="terracotta"] .chat-start .chat-bubble,
+[data-theme="glassmorphic"] .chat-start .chat-bubble {
+  color: var(--text-main);
+  background-color: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="terracotta"] .chat-end .chat-bubble,
+[data-theme="glassmorphic"] .chat-end .chat-bubble {
+  color: #ffffff;
+  background-color: var(--accent);
+}
+
+/* Midnight Cozy, Lilac Lavender, Dark Sapphire & Sage Forest:
+   let Tailwind dynamic classes own the bubble.
+   Neutralize DaisyUI defaults so gradients / glassmorphism show through. */
+[data-theme="midnight"] .chat-bubble,
+[data-theme="classic"] .chat-bubble,
+[data-theme="midnight-cozy"] .chat-bubble,
+[data-theme="lilac"] .chat-bubble,
+[data-theme="cyberpunk"] .chat-bubble,
+[data-theme="lilac-lavender"] .chat-bubble,
+[data-theme="sapphire"] .chat-bubble,
+[data-theme="dark-sapphire"] .chat-bubble,
+[data-theme="forest"] .chat-bubble,
+[data-theme="sage-forest"] .chat-bubble {
+  background-color: transparent;
+}
+
+.serif-heading {
+  font-family: var(--heading-font), serif;
+}
+
+.glass-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
+  box-shadow: var(--card-shadow);
+  border-radius: 1.5rem;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
+}
+
+/* Status colors */
+.status-active { background-color: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+.status-away { background-color: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+.status-dnd { background-color: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+
+.hover-scale {
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+}
+.hover-scale:hover {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.shake {
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.chat-wallpaper {
+  background-image: radial-gradient(var(--accent) 0.8px, transparent 0.8px),
+                    radial-gradient(var(--accent) 0.8px, transparent 0.8px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  opacity: 0.12;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(0.95); opacity: 0.3; }
+  50% { transform: scale(1.15); opacity: 0.5; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+.ring-pulse-1 {
+  animation: ringPulse 2s infinite ease-out;
+}
+
+.ring-pulse-2 {
+  animation: ringPulse 2s infinite ease-out 1s;
+}
+
+@keyframes pulse-outer-glow {
+  0% {
+    box-shadow: 0 0 15px 2px color-mix(in srgb, var(--accent) 40%, transparent), 
+                0 0 30px 5px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 25px 5px color-mix(in srgb, var(--accent) 70%, transparent), 
+                0 0 60px 10px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 15px 2px color-mix(in srgb, var(--accent) 40%, transparent), 
+                0 0 30px 5px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+}
+
+.animated-app-frame {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 1.5rem;
+  animation: pulse-outer-glow 4s ease-in-out infinite;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0turn;
+}
+
+@keyframes bg-spin {
+  to {
+    --border-angle: 1turn;
+  }
+}
+
+.animated-edge-frame {
+  position: relative;
+  padding: 3px;
+  border-radius: 1.5rem;
+  background: var(--panel-bg);
+  background-image: conic-gradient(
+    from var(--border-angle),
+    transparent 20%,
+    var(--accent) 50%,
+    transparent 80%
+  );
+  animation: bg-spin 4s linear infinite;
+  box-shadow: 0 0 40px -10px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+.animated-edge-frame::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: var(--bg-gradient);
+  border-radius: calc(1.5rem - 3px);
+  z-index: 0;
+}
+
+.animated-edge-frame > * {
+  position: relative;
+  z-index: 1;
+}
+/* Noise Texture Overlay */
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+.bg-noise > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Badge Pulse Animation */
+@keyframes badge-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.animate-badge-pulse {
+  animation: badge-pulse 2s infinite ease-in-out;
+}
+
+/* Hero dynamic chat crossfade */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out both;
+}
+
+/* Global theme-aware input + placeholder contrast */
+input, textarea, select {
+  color: var(--text-main) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.85 !important;
+}
