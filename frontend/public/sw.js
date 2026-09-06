@@ -1,12 +1,7 @@
-const CACHE_NAME = "guppshup-v2";
+const CACHE_NAME = "guppshup-v3";
 const urlsToCache = ["/", "/index.html"];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    })
-  );
   self.skipWaiting();
 });
 
@@ -31,11 +26,16 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Network-First for HTML navigation: ensures latest Vite bundle index.html is loaded
-  if (
+  const isHtml =
     event.request.mode === "navigate" ||
-    (event.request.headers.get("accept") && event.request.headers.get("accept").includes("text/html"))
-  ) {
+    (event.request.headers.get("accept") && event.request.headers.get("accept").includes("text/html"));
+  const isCodeAsset =
+    event.request.url.includes("/assets/") ||
+    event.request.url.endsWith(".js") ||
+    event.request.url.endsWith(".css");
+
+  // Network-First for HTML navigation and JS/CSS assets
+  if (isHtml || isCodeAsset) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
@@ -50,7 +50,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Cache fallback to network for static assets
+  // Cache-First for media/other assets
   event.respondWith(
     caches.match(event.request).then((response) => {
       return (

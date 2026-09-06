@@ -7,6 +7,26 @@
     <meta name="theme-color" content="#9333ea" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GuppShup - AI Realtime Messenger</title>
+    <script>
+      // Inline recovery script for stale PWA cache / missing script chunk failures
+      window.addEventListener('error', function(e) {
+        var target = e.target || e.srcElement;
+        if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
+          console.warn('Asset loading failed (stale cache). Unregistering SW and reloading...');
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              for (var i = 0; i < registrations.length; i++) {
+                registrations[i].unregister();
+              }
+              if (!sessionStorage.getItem('sw_reloaded')) {
+                sessionStorage.setItem('sw_reloaded', 'true');
+                window.location.reload(true);
+              }
+            });
+          }
+        }
+      }, true);
+    </script>
   </head>
   <body>
     <div id="root"></div>

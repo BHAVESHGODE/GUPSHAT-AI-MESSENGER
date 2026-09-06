@@ -140,11 +140,38 @@ app.use("/api/ai", aiRoutes);
 // Serve static uploaded files (audio notes, images, documents, videos)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Serve static files from the frontend build directory
-app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
+// Disable caching for HTML & ServiceWorker files
+app.use((req, res, next) => {
+  if (req.path === "/sw.js" || req.path === "/index.html" || req.path === "/") {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+  }
+  next();
+});
 
-// For any other route, serve the frontend's index.html (SPA fallback)
+// Serve static files from the frontend build directory
+app.use(
+  express.static(path.join(__dirname, "..", "frontend", "dist"), {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith("index.html") || filePath.endsWith("sw.js")) {
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      }
+    },
+  })
+);
+
+// Prevent returning HTML for missing static assets (e.g. old Vite chunk hashes)
+app.use((req, res, next) => {
+  if (req.path.startsWith("/assets/") || req.path.match(/\.(js|css|json|ico|png|jpg|jpeg|gif|svg|woff2?)$/i)) {
+    return res.status(404).type("text/plain").send("Asset Not Found");
+  }
+  next();
+});
+
+// For any other SPA route, serve index.html with no-cache headers
 app.use((req, res) => {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
 });
 
