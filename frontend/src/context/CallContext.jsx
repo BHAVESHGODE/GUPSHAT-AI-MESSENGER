@@ -146,22 +146,39 @@ export const CallProvider = ({ children }) => {
 
     try {
       const constraints = {
-        audio: true,
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+        },
         video: requestedType === "video",
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       return { stream, effectiveType: requestedType };
     } catch (err) {
+      console.warn("[WebRTC] Primary getUserMedia failed:", err);
+
+      // Fallback 1: If requestedType === "video" failed, try audio-only
       if (requestedType === "video") {
-        console.warn("[WebRTC] Video stream capture failed. Attempting audio-only fallback...", err);
-        toast("No camera detected or camera permission denied. Switching to audio call.", { icon: "🎙️" });
+        toast("Camera unavailable or blocked. Switching to audio call.", { icon: "🎙️" });
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           return { stream, effectiveType: "audio" };
         } catch (audioErr) {
-          throw audioErr;
+          err = audioErr;
         }
       }
+
+      // Fallback 2: If NotReadableError / "Could not start audio source" occurs, try minimal audio constraint
+      if (err.name === "NotReadableError" || err.name === "TrackStartError" || (err.message && err.message.includes("audio source"))) {
+        console.warn("[WebRTC] Audio source busy or constraint failed. Retrying with basic audio boolean...");
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          return { stream, effectiveType: "audio" };
+        } catch (basicErr) {
+          throw new Error("Microphone is in use by another app (Zoom, Meet, Discord) or blocked in Windows Settings.");
+        }
+      }
+
       throw err;
     }
   };
@@ -228,6 +245,8 @@ export const CallProvider = ({ children }) => {
         toast.error("Microphone/Camera permission denied in browser settings.");
       } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
         toast.error("No microphone device detected on your hardware.");
+      } else if (err.name === "NotReadableError" || err.name === "TrackStartError" || (err.message && err.message.includes("audio source"))) {
+        toast.error("Microphone is in use by another app (Zoom/Meet/Discord) or blocked by Windows Settings.");
       } else {
         toast.error("Could not access media devices: " + (err.message || "Unknown error"));
       }
@@ -308,6 +327,8 @@ export const CallProvider = ({ children }) => {
         toast.error("Microphone/Camera permission denied in browser settings.");
       } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
         toast.error("No microphone device detected on your hardware.");
+      } else if (err.name === "NotReadableError" || err.name === "TrackStartError" || (err.message && err.message.includes("audio source"))) {
+        toast.error("Microphone is in use by another app (Zoom/Meet/Discord) or blocked by Windows Settings.");
       } else {
         toast.error("Could not capture audio/video components: " + (err.message || "Unknown error"));
       }
