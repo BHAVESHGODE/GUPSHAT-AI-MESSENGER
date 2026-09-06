@@ -21,20 +21,23 @@ const parseCookies = (header) =>
 const app = express();
 const server = http.createServer(app);
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "http://127.0.0.1:3000",
-  "http://127.0.0.1:5173",
-];
-if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL);
-}
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  if (origin.endsWith(".onrender.com")) return true;
+  if (process.env.FRONTEND_URL && (origin === process.env.FRONTEND_URL || origin.replace(/\/$/, "") === process.env.FRONTEND_URL.replace(/\/$/, ""))) return true;
+  const defaults = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+  ];
+  return defaults.includes(origin);
+};
 
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (isAllowedOrigin(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Socket CORS rejected"));
