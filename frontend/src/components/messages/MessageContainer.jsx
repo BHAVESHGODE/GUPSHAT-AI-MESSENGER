@@ -121,7 +121,7 @@ const MessageContainer = () => {
   const currentCharacter = isGroupAI
     ? (charactersList.find((c) => c.id === activeCharacterId) || charactersList[0])
     : isIndividualAI
-    ? (charactersList.find((c) => c.id === selectedConversation?.characterId) || charactersList[0])
+    ? (charactersList.find((c) => c.id === selectedConversation?.characterId || c.id === selectedConversation?.username?.replace("ai_", "")) || charactersList[0])
     : null;
 
   const title = isGroupAI
@@ -132,6 +132,8 @@ const MessageContainer = () => {
 
   const avatarSrc = isGroupAI
     ? currentCharacter.avatar
+    : isIndividualAI
+    ? (currentCharacter?.avatar || selectedConversation?.profilePic)
     : isGroup
     ? selectedConversation.groupPic
     : selectedConversation?.profilePic;

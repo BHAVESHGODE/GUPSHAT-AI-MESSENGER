@@ -1,23 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Avatar = ({ src, name, className = "w-10 h-10" }) => {
   const [imgError, setImgError] = useState(false);
+
+  // Reset imgError state whenever src prop changes
+  useEffect(() => {
+    setImgError(false);
+  }, [src]);
 
   const getDiceBearFallback = (fullName) => {
     if (!fullName) return "https://api.dicebear.com/7.x/notionists/svg?seed=User&backgroundColor=transparent";
     const lower = fullName.toLowerCase();
 
+    // Specific AI persona checks BEFORE generic "ai" check
     if (lower.includes("kabir")) {
-      return "https://api.dicebear.com/7.x/notionists/svg?seed=KabirCollegeBro&backgroundColor=b6e3f4";
+      return "/avatars/kabir.jpg";
     }
-    if (lower.includes("tara")) {
-      return "https://api.dicebear.com/7.x/notionists/svg?seed=TaraIndieBestie&backgroundColor=ffd5dc";
+    if (lower.includes("martina") || lower.includes("tara")) {
+      return "/avatars/martina.jpg";
     }
     if (lower.includes("sid")) {
-      return "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=SidSavageRoast&backgroundColor=ffdfbf";
+      return "/avatars/sid.jpg";
+    }
+    if (lower.includes("maverick")) {
+      return "/avatars/maverick.jpg";
+    }
+    if (lower.includes("ghalib")) {
+      return "/avatars/ghalib.jpg";
     }
     if (lower.includes("pippaa")) {
-      return "https://api.dicebear.com/7.x/notionists/svg?seed=PippaaChaos&backgroundColor=fecdd3";
+      return "/avatars/pippaa_baddie.jpg";
     }
     if (lower.includes("ai") || lower.includes("guppshup")) {
       return "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=GuppShupAIBot&backgroundColor=c0aede";

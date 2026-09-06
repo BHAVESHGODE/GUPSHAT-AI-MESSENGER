@@ -489,10 +489,85 @@ export const chatWithAI = async (req, res) => {
             "What do you want? 💀"
           ];
         } else if (characterId === "maverick") {
-          if (p === "nothing" || p === "kuch nahi" || p === "good" || p === "bdhiya" || p === "badhiya" || p === "theek" || p === "fine") {
+          if (p.includes("wtf") || p.includes("wth") || p.includes("tf")) {
             messageBubbles = [
-              "A person of few words today, I see.",
-              "I like the mystery. What's keeping you occupied?"
+              "Fair point, my bad.",
+              "Tell me what's actually on your mind."
+            ];
+          } else if (p === "nvm" || p === "forget it" || p === "leave it" || p.includes("chhod ye sab") || p.includes("change topic") || p.includes("something else")) {
+            messageBubbles = [
+              "Consider it changed.",
+              "What else is on your mind?"
+            ];
+          } else if (p === "huh?" || p === "wdym?" || p.includes("wdym") || p === "huh") {
+            messageBubbles = [
+              "Simple: just keeping it real with you.",
+              "Nothing complicated."
+            ];
+          } else if (p === "idk" || p === "meh" || p === "guess so" || p === "maybe") {
+            messageBubbles = [
+              "Indecisive vibes today? I kind of like it.",
+              "Take your time, no rush."
+            ];
+          } else if (p.includes("pata nahi") || p.includes("ajeeb") || p.includes("samajh nahi") || p.includes("tired of everything")) {
+            messageBubbles = [
+              "Hota hai. Sometimes a weird day is just a weird day.",
+              "Main yahin hoon. Take it easy."
+            ];
+          } else if (p.includes("it is what it is") || p.includes("people are fake")) {
+            messageBubbles = [
+              "The classic 'it is what it is'.",
+              "True, but usually something triggered that thought—who annoyed you today?"
+            ];
+          } else if (p.includes("as if you care") || p.includes("sure buddy")) {
+            messageBubbles = [
+              "Bold assumption.",
+              "I actually do pay attention. Try me."
+            ];
+          } else if (p.includes("stop") && (p.includes("question") || p.includes("asking"))) {
+            messageBubbles = [
+              "Got it. Questionnaire cancelled.",
+              "Floor's all yours."
+            ];
+          } else if (p.includes("matlab") || p.includes("meaning")) {
+            messageBubbles = [
+              "Just checking in on how your day is going, nothing deep.",
+              "What's on your mind?"
+            ];
+          } else if (p.includes("not feeling good") || p.includes("not feeling well") || p.includes("sad") || p.includes("mood off") || p.includes("feeling low")) {
+            messageBubbles = [
+              "Hey, what happened?",
+              "Take it easy. Tell me what's bothering you—or we can just chill, whatever you need."
+            ];
+          } else if (p.includes("falling behind") || p.includes("running out of time") || p.includes("behind in life")) {
+            messageBubbles = [
+              "Take a breath. You're looking at the clock, not the compass.",
+              "Everyone runs at their own pace. You aren't falling behind, you're just building a stronger foundation."
+            ];
+          } else if (p.includes("when did i") || p.includes("stick to something")) {
+            messageBubbles = [
+              "Fair point, my bad.",
+              "Let's reset. What's actually on your mind?"
+            ];
+          } else if (p.includes("not good") || p.includes("told fine")) {
+            messageBubbles = [
+              "Fair point, my bad.",
+              "Fine it is. Kicking back today or just getting through it?"
+            ];
+          } else if (p === "fine" || p === "theek") {
+            messageBubbles = [
+              "Fine works.",
+              "Just kicking back today, or is there more to the story?"
+            ];
+          } else if (p === "nothing" || p === "nothing!" || p === "kuch nahi") {
+            messageBubbles = [
+              "Fair enough.",
+              "Kicking back then. What are you up to right now?"
+            ];
+          } else if (p === "good" || p === "bdhiya" || p === "badhiya") {
+            messageBubbles = [
+              "Good to hear.",
+              "What's keeping you occupied today?"
             ];
           } else if (p.includes("kaise ho") || p.includes("kaisa hai") || p.includes("how are you")) {
             messageBubbles = [
@@ -503,12 +578,6 @@ export const chatWithAI = async (req, res) => {
             messageBubbles = [
               "Bored in a world with me in it?",
               "We can't have that. Tell me what usually holds your attention."
-            ];
-          } else if (p.includes("sad") || p.includes("falling behind") || p.includes("stress") || p.includes("lost") || p.includes("tired")) {
-            messageBubbles = [
-              "Take a breath. You're looking at the clock, not the compass.",
-              "Everyone runs at their own pace. You aren't falling behind, you're just building a stronger foundation.",
-              "Now tell me, what specifically is making you feel this way?"
             ];
           } else if (p.includes("flirt") || p.includes("bed") || p.includes("cum") || p.includes("sex") || p.includes("kiss") || p.includes("spicy") || p.includes("hot") || p.includes("night") || p.includes("touch") || p.includes("cocky")) {
             messageBubbles = [

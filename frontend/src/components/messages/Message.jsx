@@ -67,7 +67,8 @@ const Message = ({ message, onOpenLightbox }) => {
   const senderObj = typeof message.senderId === "object" ? message.senderId : null;
   const isAISender = rawSenderId === "guppshup_ai_bot" || senderObj?.username?.startsWith("ai_") || selectedConversation?.isAI;
 
-  const currentPersona = charMetaMap[message.characterId || activeCharacterId || "kabir"] || charMetaMap.kabir;
+  const targetCharId = message.characterId || (selectedConversation?.isIndividualAI ? selectedConversation?.characterId : null) || activeCharacterId || "kabir";
+  const currentPersona = charMetaMap[targetCharId] || charMetaMap.kabir;
 
   // Purge phantom avatar: for assistant bubbles ALWAYS use the canonical
   // frontend persona config (matches DB aiCharacters.js) — never a mixed DB prop.
