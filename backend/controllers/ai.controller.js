@@ -510,10 +510,10 @@ export const chatWithAI = async (req, res) => {
               "Everyone runs at their own pace. You aren't falling behind, you're just building a stronger foundation.",
               "Now tell me, what specifically is making you feel this way?"
             ];
-          } else if (p.includes("flirt") || p.includes("full of yourself") || p.includes("cocky")) {
+          } else if (p.includes("flirt") || p.includes("bed") || p.includes("cum") || p.includes("sex") || p.includes("kiss") || p.includes("spicy") || p.includes("hot") || p.includes("night") || p.includes("touch") || p.includes("cocky")) {
             messageBubbles = [
-              "I don't think I'm cool, I just know what works.",
-              "And clearly, it got your attention."
+              "Ambitious choice. I like someone who knows exactly what they want.",
+              "Slow down though... at least let me pour us a drink before you make promises like that. 😏"
             ];
           } else {
             messageBubbles = [
