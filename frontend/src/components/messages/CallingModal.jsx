@@ -27,19 +27,22 @@ const CallingModal = () => {
   const remoteAudioRef = useRef(null);
   const durationIntervalRef = useRef(null);
 
-  // Play streams on video elements
+  // Play streams on video and audio elements
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
+      localVideoRef.current.play().catch(() => {});
     }
   }, [localStream, callStatus]);
 
   useEffect(() => {
     if (remoteVideoRef.current && remoteStream && callType === "video") {
       remoteVideoRef.current.srcObject = remoteStream;
+      remoteVideoRef.current.play().catch((err) => console.warn("Remote video playback notice:", err));
     }
-    if (remoteAudioRef.current && remoteStream && callType === "audio") {
+    if (remoteAudioRef.current && remoteStream) {
       remoteAudioRef.current.srcObject = remoteStream;
+      remoteAudioRef.current.play().catch((err) => console.warn("Remote audio playback notice:", err));
     }
   }, [remoteStream, callType, callStatus]);
 
@@ -95,7 +98,7 @@ const CallingModal = () => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in text-white">
       
       {/* Audio Element for WebRTC audio playback */}
-      {callType === "audio" && <audio ref={remoteAudioRef} autoPlay playsInline />}
+      <audio ref={remoteAudioRef} autoPlay playsInline />
 
       <div className="w-full max-w-md glass-panel p-6 flex flex-col items-center text-center relative border-[var(--panel-border)] shadow-2xl rounded-[2.5rem]">
         

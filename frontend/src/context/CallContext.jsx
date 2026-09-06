@@ -139,19 +139,41 @@ export const CallProvider = ({ children }) => {
     };
   }, [socket, callStatus]);
 
+  const getMediaStreamWithFallback = async (requestedType) => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error("Media devices API is not supported in this browser");
+    }
+
+    try {
+      const constraints = {
+        audio: true,
+        video: requestedType === "video",
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      return { stream, effectiveType: requestedType };
+    } catch (err) {
+      if (requestedType === "video") {
+        console.warn("[WebRTC] Video stream capture failed. Attempting audio-only fallback...", err);
+        toast("No camera detected or camera permission denied. Switching to audio call.", { icon: "🎙️" });
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          return { stream, effectiveType: "audio" };
+        } catch (audioErr) {
+          throw audioErr;
+        }
+      }
+      throw err;
+    }
+  };
+
   const initiateCall = async (targetUser, type = "audio") => {
     try {
       console.log(`[WebRTC] Initiating call to ${targetUser.fullName} (${targetUser._id}) of type ${type}`);
       setCallStatus("calling");
       setReceiverInfo(targetUser);
-      setCallType(type);
 
-      const constraints = {
-        audio: true,
-        video: type === "video",
-      };
-
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const { stream, effectiveType } = await getMediaStreamWithFallback(type);
+      setCallType(effectiveType);
       setLocalStream(stream);
       localStreamRef.current = stream;
 
@@ -196,13 +218,19 @@ export const CallProvider = ({ children }) => {
 
       socket.emit("callUser", {
         userToCall: targetUser._id,
-        signalData: { sdp: offer, type },
+        signalData: { sdp: offer, type: effectiveType },
       });
 
     } catch (err) {
       console.error("Failed to start WebRTC media stream:", err);
       cleanupCallState();
-      toast.error("Could not access camera or microphone");
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        toast.error("Microphone/Camera permission denied in browser settings.");
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        toast.error("No microphone device detected on your hardware.");
+      } else {
+        toast.error("Could not access media devices: " + (err.message || "Unknown error"));
+      }
     }
   };
 
@@ -218,12 +246,8 @@ export const CallProvider = ({ children }) => {
         callDurationRef.current = Math.floor((Date.now() - startedAt) / 1000);
       }, 1000);
 
-      const constraints = {
-        audio: true,
-        video: callType === "video",
-      };
-
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const { stream, effectiveType } = await getMediaStreamWithFallback(callType);
+      setCallType(effectiveType);
       setLocalStream(stream);
       localStreamRef.current = stream;
 
@@ -280,7 +304,13 @@ export const CallProvider = ({ children }) => {
     } catch (err) {
       console.error("Failed to accept call:", err);
       cleanupCallState();
-      toast.error("Could not capture audio/video components");
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        toast.error("Microphone/Camera permission denied in browser settings.");
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        toast.error("No microphone device detected on your hardware.");
+      } else {
+        toast.error("Could not capture audio/video components: " + (err.message || "Unknown error"));
+      }
     }
   };
 

@@ -224,6 +224,11 @@ const MessageInput = ({ externalSelectedFile, clearExternalFile }) => {
   };
 
   const startRecording = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast.error("Audio recording is not supported in this browser environment");
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
@@ -244,7 +249,13 @@ const MessageInput = ({ externalSelectedFile, clearExternalFile }) => {
       }, 1000);
     } catch (err) {
       console.error("Microphone access error:", err);
-      toast.error("Could not access microphone");
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        toast.error("Microphone permission denied. Please allow microphone access in browser settings.");
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        toast.error("No microphone hardware detected on your device.");
+      } else {
+        toast.error("Could not access microphone: " + (err.message || "Unknown error"));
+      }
     }
   };
 

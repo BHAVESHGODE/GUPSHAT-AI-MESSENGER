@@ -24,25 +24,41 @@ const useListenMessages = () => {
       const sound = new Audio(notificationSound);
       sound.play().catch(() => {});
 
-      if (selectedConversation?._id === newMessage.senderId) {
-        if (!markAsReadRef.current) {
-          socket.emit("markAsRead", { senderId: authUser._id, receiverId: selectedConversation._id });
-          markAsReadRef.current = true;
+      const senderId = typeof newMessage.senderId === "object" ? newMessage.senderId._id : newMessage.senderId;
+      const receiverId = typeof newMessage.receiverId === "object" ? newMessage.receiverId._id : newMessage.receiverId;
+      const msgGroupId = typeof newMessage.groupId === "object" ? newMessage.groupId._id : newMessage.groupId;
+
+      let isForCurrentConversation = false;
+      if (selectedConversation) {
+        if (selectedConversation.isGroup || selectedConversation.groupId) {
+          isForCurrentConversation = Boolean(msgGroupId && msgGroupId === selectedConversation._id);
+        } else {
+          isForCurrentConversation = Boolean(
+            selectedConversation._id === senderId ||
+            selectedConversation._id === receiverId
+          );
         }
-        newMessage.isRead = true;
       }
 
-      setMessages((prev) =>
-        prev.some((m) => m._id === newMessage._id) ? prev : [...prev, newMessage]
-      );
+      if (isForCurrentConversation) {
+        if (!markAsReadRef.current && senderId === selectedConversation._id) {
+          socket.emit("markAsRead", { senderId: authUser._id, receiverId: selectedConversation._id });
+          markAsReadRef.current = true;
+          newMessage.isRead = true;
+        }
+
+        setMessages((prev) =>
+          prev.some((m) => m._id === newMessage._id) ? prev : [...prev, newMessage]
+        );
+      }
 
       // Show native desktop notification if window is blurred/hidden
       if (document.hidden) {
-        const senderName = newMessage.senderId?.fullName || "GuppShup Contact";
+        const senderName = typeof newMessage.senderId === "object" ? newMessage.senderId.fullName : "GuppShup Contact";
         showDesktopNotification({
           title: `New message from ${senderName}`,
           body: newMessage.message || newMessage.fileName || "Media Attachment",
-          icon: newMessage.senderId?.profilePic,
+          icon: typeof newMessage.senderId === "object" ? newMessage.senderId.profilePic : undefined,
         });
       }
     };
